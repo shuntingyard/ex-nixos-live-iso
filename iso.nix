@@ -1,7 +1,5 @@
-{ modulesPath, pkgs, ... }:
-{
+{pkgs, ...}: {
   imports = [
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-plasma5.nix"
   ];
 
   # Enables copy / paste when running in a KVM with spice.
@@ -38,7 +36,4 @@
       };
     };
   };
-
-  # Use faster squashfs compression
-  isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 }
