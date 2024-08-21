@@ -43,13 +43,12 @@
     home.stateVersion = "21.11";
 
     programs = {
-      alacritty.enable = true;
       fzf.enable = true; # enables zsh integration by default
 
       zsh = {
         enable = true;
         enableCompletion = true;
-        enableAutosuggestions = true;
+        autosuggestion.enable = true;
       };
 
       neovim = {

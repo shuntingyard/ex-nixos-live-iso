@@ -16,41 +16,56 @@
   };
 
   outputs = {
+    self,
+    nixpkgs,
     nixos-generators,
     home-manager,
     ...
   }: {
-    packages.x86_64-linux = {
-      iso = nixos-generators.nixosGenerate {
-        system = "x86_64-linux";
-        modules = [
-          # you can include your own nixos configuration here, i.e.
-          ./iso.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-            };
-          }
-        ];
-        format = "install-iso";
+    # A single nixos config outputting multiple formats.
+    # Alternatively put this in a configuration.nix.
+    nixosModules.myFormats = {config, ...}: {
+      imports = [
+        nixos-generators.nixosModules.all-formats
+      ];
 
-        # optional arguments:
-        # explicit nixpkgs and lib:
-        # pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
-        # additional arguments to pass to modules:
-        # specialArgs = { myExtraArg = "foobar"; };
+      nixpkgs.hostPlatform = "x86_64-linux";
 
-        # you can also define your own custom formats
-        # customFormats = { "myFormat" = <myFormatModule>; ... };
-        # format = "myFormat";
+      # customize an existing format
+      formatConfigs.vmware = {config, ...}: {
+        services.openssh.enable = true;
       };
-      vbox = nixos-generators.nixosGenerate {
-        system = "x86_64-linux";
-        format = "virtualbox";
+
+      # define a new format
+      formatConfigs.my-custom-format = {
+        config,
+        modulesPath,
+        ...
+      }: {
+        imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
+        formatAttr = "isoImage";
+        fileExtension = ".iso";
+        networking.wireless.networks = {
+          # ...
+        };
       };
+    };
+
+    # using above module, we define a machine named `installer`
+    nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
+      # system = "x86_64-linux";
+      modules = [
+        self.nixosModules.myFormats
+        # you can include your own nixos configuration here, i.e.
+        ./iso.nix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+          };
+        }
+      ];
     };
   };
 }
