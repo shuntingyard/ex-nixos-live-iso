@@ -16,9 +16,9 @@ All formats built will be in `./result/`
 
 ## Goals of this Fork
 
-[x] Reduce output size (trading Calamares' comfort for size)
-[x] Build installer in a variety of formats.
-[x] Build `kexec-bundle` in order to apply a customized installer **anywhere**.
+- [x] Reduce output size (trading Calamares' comfort for size)
+- [x] Build installer in a variety of formats.
+- [x] Build `kexec-bundle` in order to apply a customized installer **anywhere**.
 
 ## From the Original Repo
 
